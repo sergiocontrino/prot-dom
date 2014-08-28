@@ -1,15 +1,20 @@
-#atted-table {
+#atted-container {
+	font-family: sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+#atted-container > #atted-table {
 	font-family: sans-serif;
 	width: 100%;
 }
 
-#atted-table th {
+#atted-container > #atted-table th {
 	background-color: black;
 	color: white;
 	padding: 4px;
 }
 
-#atted-table td {
+#atted-container > #atted-table td {
 	background-color: #EBEBEB;
 	padding: 4px;
 }
