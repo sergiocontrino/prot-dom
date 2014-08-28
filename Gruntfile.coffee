@@ -4,7 +4,6 @@ module.exports = taskManager = (grunt) ->
   grunt.initConfig
     config:
       package: grunt.file.readJSON 'package.json'
-      bower:   grunt.file.readJSON 'bower.json'
 
     # contrib-clean config
     # (https://github.com/gruntjs/grunt-contrib-clean/blob/master/README.md)
@@ -18,15 +17,6 @@ module.exports = taskManager = (grunt) ->
       'build/**'
     ]
 
-    # bower-task config
-    # (https://github.com/yatskevich/grunt-bower-task/blob/master/README.md)
-    bower:
-      install:
-        options:
-          targetDir: 'vendor'
-          layout:    'byType'
-          install:   true
-          cleanup:   true
 
     # contrib-coffee config
     # (https://github.com/gruntjs/grunt-contrib-coffee/blob/master/README.md)
@@ -53,7 +43,7 @@ module.exports = taskManager = (grunt) ->
     browserify:
       all:
         src:  ['lib/index.js']
-        dest: 'build/<%= config.bower.name %>-<%= config.bower.version %>.js'
+        dest: 'build/<%= config.package.name %>-<%= config.package.version %>.js'
         options:
           transform: ['hbsfy', 'cssify']
           # Add global aliases for browserify modules.
@@ -65,11 +55,11 @@ module.exports = taskManager = (grunt) ->
     # (https://github.com/gruntjs/grunt-contrib-uglify/blob/master/README.md)
     uglify:
       options:
-        banner: '/*! <%= config.bower.name %>-<%= config.bower.version %>
+        banner: '/*! <%= config.package.name %>-<%= config.package.version %>
          Built: <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       all:
-        src:  'build/<%= config.bower.name %>-<%= config.bower.version %>.js'
-        dest: 'build/<%= config.bower.name %>-<%= config.bower.version %>.min.js'
+        src:  'build/<%= config.package.name %>-<%= config.package.version %>.js'
+        dest: 'build/<%= config.package.name %>-<%= config.package.version %>.min.js'
 
     # contrib-copy config
     # (https://github.com/gruntjs/grunt-contrib-copy/blob/master/README.md)
@@ -77,18 +67,36 @@ module.exports = taskManager = (grunt) ->
       builds:
         files: [
           {
-            src:  'build/<%= config.bower.name %>-<%= config.bower.version %>.js'
-            dest: 'build/<%= config.bower.name %>.js'
+            src:  'build/<%= config.package.name %>-<%= config.package.version %>.js'
+            dest: 'build/<%= config.package.name %>.js'
           }, {
-            src:  'build/<%= config.bower.name %>-<%= config.bower.version %>.min.js'
-            dest: 'build/<%= config.bower.name %>.min.js'
+            src:  'build/<%= config.package.name %>-<%= config.package.version %>.min.js'
+            dest: 'build/<%= config.package.name %>.min.js'
+          }
+        ]
+      templates:
+        files: [
+          {
+            cwd:  'src/templates/'
+            src:  '*'
+            dest: 'lib/templates'
+            expand: true
+          }
+        ]
+      styles:
+        files: [
+          {
+            cwd:  'src/styles/'
+            src:  '*'
+            dest: 'lib/styles'
+            expand: true
           }
         ]
 
     # contrib-watch config
     # (https://github.com/gruntjs/grunt-contrib-watch/blob/master/README.md)
     watch:
-      files: 'src/**/*.coffee'
+      files: 'src/**/*.*'
       tasks: ['do']
 
   # Load npm tasks.
@@ -97,12 +105,16 @@ module.exports = taskManager = (grunt) ->
 
   grunt.loadNpmTasks plugin for plugin in plugins
 
+  grunt.registerTask 'move', 'copyelse'
+
   # Register custom tasks.
-  grunt.registerTask 'setup',   ['clean', 'bower:install']
+  grunt.registerTask 'setup',   ['clean', 'do']
   grunt.registerTask 'compile', ['coffee']
-  grunt.registerTask 'build',   ['browserify', 'uglify', 'copy']
+  grunt.registerTask 'build',   ['copy:templates', 'copy:styles', 'browserify', 'uglify', 'copy:builds']
 
   grunt.registerTask 'all',     ['setup', 'compile', 'build']
+
+  grunt.registerTask 'move', ['copyelse']
   grunt.registerTask 'do', ['compile', 'build']
 
   grunt.registerTask 'default', ['watch']

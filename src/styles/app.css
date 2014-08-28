@@ -1,0 +1,15 @@
+#atted-table {
+	font-family: sans-serif;
+	width: 100%;
+}
+
+#atted-table th {
+	background-color: black;
+	color: white;
+	padding: 4px;
+}
+
+#atted-table td {
+	background-color: #EBEBEB;
+	padding: 4px;
+}

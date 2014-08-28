@@ -1,0 +1,15 @@
+<h3>Search for {{opts.AGIcode}} returned {{genes.length}} results:</h3>
+<table id="atted-table">
+	<thead>
+		<th>Name</th>
+		<th>Score</th>
+	</thead>
+	<tbody>
+		{{#each genes}}
+		<tr>
+			<td>{{name}}</td>
+			<td>{{score}}</td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>

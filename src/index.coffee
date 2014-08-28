@@ -2,7 +2,7 @@ request = require 'superagent'
 Utils = require './utils/Utils'
 _ = require 'underscore'
 Q = require 'q'
-style = require('./style/app.css');
+style = require('./styles/app.css');
 Spinner = require 'spin'
 $ = require 'jquery'
 
@@ -76,12 +76,12 @@ class App
 		 	-item.score
 
 		# Require our table template
-		template = require './templates/template.hbs'
+		template = require './templates/displayer.hbs'
 
 		# Stop our spinner
 		@spinner.stop()
 
 		# Render the table to the DOM
-		@opts.target.append template { genes: genes }
+		@opts.target.html template { genes: genes, opts: @opts }
 
 module.exports = App
