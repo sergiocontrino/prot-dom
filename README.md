@@ -4,10 +4,19 @@ This application displays data fetched from the ATTED-II web service (http://att
 
 ##Usage##
 
-Include "atted-displayer.js" in the head of your HTML document, and create a container where the displayer will be rendered. Then instantiate the displayer like so:
+Include "atted-displayer.js" in the head of your HTML document and create a container where the displayer will be rendered. Then instantiate the displayer like so:
 
     #!javascript
-    var displayer = new AttedDisplayer('#attedcontainer');
+    var opts = {
+        target: '#displayercontainer',
+        AGIcode: 'At3g47780',
+    }
+    var displayer = new AttedDisplayer(opts);
+    
+The AttedDisplayer object is constructed with an options object. The following are valid key-value pairs:
+
+* target: The string value of the target HTML container.
+* AGIcode: The search term. This should match a valid AGI code.
     
 ##Development##
 
@@ -24,4 +33,6 @@ Then build the project:
 The build process runs automatically when files in the /src folder are modified:
 
 <code>npm start</code>
+
+##Useage##
 
