@@ -1,0 +1,24 @@
+{
+  "name": "atted-displayer",
+  "version": "0.0.1",
+
+  "dependencies": {
+    "d3": "*",
+    "q": "*",
+    "superagent": "*"
+  },
+
+  "ignore": [
+    "**/.*",
+    "node_modules",
+
+    "package.json",
+    "bower.json",
+
+    "src",
+    "lib",
+    "build",
+    "vendor",
+    "components"
+  ]
+}
