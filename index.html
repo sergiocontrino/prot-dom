@@ -8,8 +8,12 @@
     <body>
         <div id="attedcontainer"></div>
         <script type="text/javascript">
-            var displayer = new AttedDisplayer('#attedcontainer');
+            var opts = {
+                target: '#attedcontainer',
+                AGIcode: 'At3g47780',
+            }
+            var displayer = new AttedDisplayer(opts);
         </script>
     </body>
-    
+
 </html>

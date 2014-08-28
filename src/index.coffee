@@ -8,16 +8,16 @@ $ = require 'jquery'
 
 class App
 
-	constructor: (@target) ->
+	constructor: (@opts) ->
 
 		# Turn our taret string into a jquery object
-		@target = $ @target
+		@opts.target = $ @opts.target
 
 		# Fetch our loading template
 		template = require("./templates/loading.hbs");
 
 		# Render the loading template to the DOM
-		@target.html template {}
+		@opts.target.html template {}
 
 		# Options for the spinner:
 		opts =
@@ -57,7 +57,7 @@ class App
 		deferred = Q.defer()
 
 		# The URL of our web service
-		url = 'http://atted.jp/cgi-bin/API_coex.cgi?At1g01010/mr/100'
+		url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/mr/100"
 
 		# Make a request to the web service
 		request.get url, (response) =>
@@ -82,6 +82,6 @@ class App
 		@spinner.stop()
 
 		# Render the table to the DOM
-		@target.append template { genes: genes }
+		@opts.target.append template { genes: genes }
 
 module.exports = App
