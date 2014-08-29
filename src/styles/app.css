@@ -1,20 +1,45 @@
 #atted-container {
 	font-family: sans-serif;
 	-webkit-font-smoothing: antialiased;
+	font-size: 12px;
 }
 
-#atted-container > #atted-table {
+#atted-container > #atted-table-wrapper > #atted-table {
 	font-family: sans-serif;
 	width: 100%;
 }
 
-#atted-container > #atted-table th {
+#atted-container > #atted-table-wrapper > #atted-table th {
 	background-color: black;
 	color: white;
-	padding: 4px;
+	padding: 2px;
 }
 
-#atted-container > #atted-table td {
+#atted-container > #atted-table-wrapper > #atted-table td {
 	background-color: #EBEBEB;
-	padding: 4px;
+	padding: 2px;
+}
+
+#atted-table-wrapper {
+	max-height: 200px;
+	height: 200px;
+	overflow-y: scroll;
+	background: #EBEBEB;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
 }
