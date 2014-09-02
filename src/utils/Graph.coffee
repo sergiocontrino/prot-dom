@@ -86,7 +86,7 @@ class Graph
 			.datum(@lineData)
 			.attr("class", "line unselected")
 			.attr "d", line
-			.attr("filter", "url(#blurry)")
+			# .attr("filter", "url(#blurry)")
 
 		# @svg.append("rect").attr("class", "clickable").attr("width", width).attr("height", height).attr("fill", "red").attr("fill-opacity", "0") #.on("mousemove", mousemove);
 
@@ -109,6 +109,7 @@ class Graph
 
 		# Store the last cut off of the brush so that we can use it when the graph resizes.
 		@lastcutoff = d
+		@lastcutoffindex = cutoffindex
 
 		# Resize our brush accordingly
 		d3.select(".brush").attr("width", xScale(d.x))
@@ -140,8 +141,8 @@ class Graph
 
 		# @svg.select(".line").datum(dataResampled).attr("d", line)
 		# @svg.select(".line").datum(dataResampled).attr("d", line)
-		d3.select(".line.unselected").datum(@lineData.slice @lastcutoff.x, @lineData.length).attr("d", line)
-		d3.select(".line.selected").datum(@lineData.slice 0, @lastcutoff.x + 1).attr("d", line)
+		d3.select(".line.unselected").datum(@lineData.slice @lastcutoffindex, @lineData.length).attr("d", line)
+		d3.select(".line.selected").datum(@lineData.slice 0, @lastcutoffindex + 1).attr("d", line)
 
 		@svg.select(".y.axis").call(yAxis)
 		@svg.select('.x.axis').attr("transform", "translate(0," + height + ")").call(xAxis);
@@ -149,6 +150,7 @@ class Graph
 		# TODO: Fix the following selection
 		d3.select('svg').attr("width", width + allmargin*2)
 		d3.select(".brush").attr("width", xScale(@lastcutoff.x))
+		d3.select(".background").attr("width", width)
 		@
 
 module.exports = Graph

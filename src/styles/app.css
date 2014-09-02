@@ -4,7 +4,7 @@
 	font-size: 12px;
 }
 
-#atted-container > #atted-table-wrapper > #atted-table {
+/*#atted-container > #atted-table-wrapper > #atted-table {
 	font-family: sans-serif;
 	width: 100%;
 }
@@ -19,7 +19,7 @@
 	background-color: #EBEBEB;
 	padding: 2px;
 }
-
+*/
 #atted-table-wrapper {
 	max-height: 200px;
 	height: 200px;
