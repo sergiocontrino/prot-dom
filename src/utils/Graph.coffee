@@ -6,7 +6,7 @@ class Graph
 
 	allmargin = 25
 
-	bisectDate = d3.bisector((d) -> d.x).left
+	bisectDate = d3.bisector((d) -> d.index).left
 
 	if !width then width = 0
 	if !height? then height = 0
@@ -14,8 +14,8 @@ class Graph
 	xScale = d3.scale.linear().range [0,width]
 	yScale = d3.scale.linear().range [0,height]
 
-	line = d3.svg.line().x (d) -> xScale d.x
-	.y (d) -> yScale d.y
+	line = d3.svg.line().x (d) -> xScale d.index
+	.y (d) -> yScale d.score
 
 	xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(d3.format('.0f'))
 	yAxis = d3.svg.axis().scale(yScale).orient("left")
@@ -23,10 +23,12 @@ class Graph
 	constructor: (@data) ->
 
 		@lineData = _.map @data, (next, index) ->
-			{x: index, y: next.score}
+			{x: index, y: next.score, index: index, score: next.score}
 
-		xScale.domain d3.extent @lineData, (d) -> d.x
-		yScale.domain d3.extent @lineData, (d) -> d.y
+		console.log("@lineData", @lineData);
+
+		xScale.domain d3.extent @lineData, (d) -> d.index
+		yScale.domain d3.extent @lineData, (d) -> d.score
 
 		width = parseInt(d3.select("#vis").style("width")) - allmargin*2
 		height = parseInt(d3.select("#vis").style("height")) - allmargin*2;
@@ -92,7 +94,7 @@ class Graph
 
 		# Assume that the user wants all numbers, so set the brush to the maximum value
 		@update d3.max @lineData, (d) ->
-			d.y
+			d.score
 
 		# If the window updates then resize the graph
 		d3.select(window).on('resize', @resize)
@@ -102,7 +104,7 @@ class Graph
 		cutoffindex = @lineData.length - 1
 
 		for gene, index in @lineData
-			if gene.y > value
+			if gene.score > value
 				cutoffindex = index
 				break
 		d = @lineData[cutoffindex]
@@ -112,7 +114,7 @@ class Graph
 		@lastcutoffindex = cutoffindex
 
 		# Resize our brush accordingly
-		d3.select(".brush").attr("width", xScale(d.x))
+		d3.select(".brush").attr("width", xScale(d.index))
 
 		sliced = @lineData.slice(cutoffindex, @lineData.length)
 
@@ -149,7 +151,7 @@ class Graph
 
 		# TODO: Fix the following selection
 		d3.select('svg').attr("width", width + allmargin*2)
-		d3.select(".brush").attr("width", xScale(@lastcutoff.x))
+		d3.select(".brush").attr("width", xScale(@lastcutoff.index))
 		d3.select(".background").attr("width", width)
 		@
 

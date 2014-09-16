@@ -47,7 +47,7 @@ module.exports = taskManager = (grunt) ->
         options:
           transform: ['hbsfy', 'cssify']
           # Add global aliases for browserify modules.
-          bundleOptions:
+          browserifyOptions:
               standalone: 'AttedDisplayer'
               debug: true
 
