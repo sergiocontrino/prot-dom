@@ -12,3 +12,4 @@ node_modules
 # Bower installs
 components
 vendor
+bower_components
