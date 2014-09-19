@@ -47,6 +47,15 @@
   /*display: none;*/
 }
 
+.x.axis.label {
+	fill: white;
+	font-size: 10px;
+}
+.y.axis.label {
+	fill: white;
+	font-size: 10px;
+}
+
 .line {
   fill: none;
   stroke: white;
@@ -55,11 +64,25 @@
 
 .line.unselected {
 	fill: none;
+	stroke: black;
+	stroke-width: 1px;
+}
+
+
+.line.selected {
+	fill: none;
 	stroke: white;
 	stroke-width: 1px;
 }
 
-#vis {
+#viz {
 	width: 100%;
 	height: 150px;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill: white;
+  fill-opacity: .5;
+  shape-rendering: crispEdges;
 }

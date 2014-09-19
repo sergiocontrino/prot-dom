@@ -3,21 +3,29 @@
 
     <head>
         <script charset="utf-8" type="text/javascript" src="build/atted-displayer-0.0.1.js"></script>
-        <link rel="stylesheet" type="text/css" href="bootstrap.css">
+
+
+
+
+         <script charset="UTF-8"
+        type="text/javascript"
+        src="bower_components/im-tables/js/imtables-mini-bundle.js">
+        </script>
     </head>
+
+
 
     <body>
 
-        <div id="chart"></div>
-
-        <div id="vis"></div>
-
         <div id="displayercontainer"></div>
+
         <script type="text/javascript">
-            var opts = {
-                target: '#displayercontainer',
-                AGIcode: 'At5g54270',
-            }
+            var opts = 
+                {                
+                    target: '#displayercontainer',
+                    AGIcode: 'At5g54270',
+                }
+                
             var displayer = new AttedDisplayer(opts);
         </script>
     </body>
