@@ -18,7 +18,7 @@ class App
 		console.log "mediator", mediator
 
 		mediator.subscribe "switch-score", =>
-			@chain {method: "mr", cutoff: "30"}
+			@chain {method: "cor", cutoff: "0.8"}
 
 		# Turn our taret string into a jquery object
 		@opts.target = $ @opts.target
@@ -146,6 +146,9 @@ class App
 		$('#toolbar').html toolbartemplate {mediator: mediator}
 		$('#clickable').on "click", ()->
 			mediator.publish "switch-score", "mr"
+
+		$('#clickable2').on "click", ()->
+			mediator.publish "adddata", "mr"
 
 		template = require './templates/table.hbs'
 		$('#atted-table').html template {genes: genes}
