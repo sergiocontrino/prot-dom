@@ -1,8 +1,14 @@
-#atted-container {
+.atted-table{
 	font-family: sans-serif;
 	-webkit-font-smoothing: antialiased;
 	font-size: 12px;
+
+
+	width: 100%;
+	overflow: y;
 }
+
+
 
 /*#atted-container > #atted-table-wrapper > #atted-table {
 	font-family: sans-serif;
@@ -20,9 +26,9 @@
 	padding: 2px;
 }
 */
-#atted-table-wrapper {
-	max-height: 200px;
-	height: 200px;
+.atted-table-wrapper {
+	max-height: 150px;
+	height: 150px;
 	overflow-y: scroll;
 	background: #EBEBEB;
 }

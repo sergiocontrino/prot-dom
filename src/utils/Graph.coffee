@@ -32,7 +32,7 @@ class Graph
 
 		@lineData = @transform data
 
-		console.log("@lineData from constructor", @lineData);
+		# console.log("@lineData from constructor", @lineData);
 
 		
 		# Get the width and height of our SVG container
@@ -143,7 +143,7 @@ class Graph
 
 	rescale: () ->
 
-		console.log "rescakubng="
+		# console.log "rescakubng="
 
 		xScale.domain d3.extent @lineData, (d) -> d.index
 		yScale.domain d3.extent @lineData, (d) -> d.score
@@ -159,11 +159,11 @@ class Graph
 
 		yAxis.ticks(Math.max(height/50, 5));
 
-		console.log "finished rendering"
+		# console.log "finished rendering"
 
 		# brush.extent([0,0])
 
-		console.log "BRUSH", brush
+		# console.log "BRUSH", brush
 
 		# do @brushed
 		d3.select(".x.brush").remove()

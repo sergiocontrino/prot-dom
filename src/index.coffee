@@ -15,19 +15,33 @@ class App
 
 	constructor: (@opts) ->
 
-		console.log "mediator", mediator
-
-		mediator.subscribe "switch-score", =>
-			@chain {method: "cor", cutoff: "0.8"}
-
 		# Turn our taret string into a jquery object
 		@opts.target = $ @opts.target
+
+
+		# Listener: Switching score types:
+		mediator.subscribe "switch-score", =>
+			method = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[type='radio']:checked");
+			cutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols > input.cutoff");
+			console.log "cutoff", cutoff
+			if method.length > 0 and cutoff.length > 0 then @requery {method: method.val(), cutoff: cutoff.val()}
 
 		# Fetch our loading template
 		template = require("./templates/shell.hbs");
 
-		# Render the loading template to the DOM
+		# Render the shell of the application
 		@opts.target.html template {}
+
+		toolbartemplate = require './templates/tools.hbs'
+
+		$("#{@opts.target.selector} > div.toolbar").html toolbartemplate {opts: @opts, mediator: mediator}
+		radioMethod = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[class='" + @opts.method + "']");
+		textCutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input.cutoff");
+		radioMethod.prop("checked", true)
+		textCutoff.val(@opts.cutoff)
+
+		$('.reload').on "click", ()->
+			mediator.publish "switch-score"
 
 		# Options for the spinner:
 		opts =
@@ -59,32 +73,27 @@ class App
 
 		# First make a request to the web service, then render the results
 		# when the request is fulfilled
-		options =
-			method: "mr"
-			cutoff: "15"
 
-		Q.when(@call(options)).done @renderapp
+
+		Q.when(@call(@opts)).done @renderapp
 
 
 	# query: (opts) ->
 	# 	Q.when(@call(opts)).done @renderapp
 
-	chain: (options) ->
+	requery: (options) ->
+
+		console.log "requerying with options", options
 		Q.when(@call(options)).done @renderapp
 
 	call: (options) =>
 
-		console.log "calling with options", options
 		# Create our deferred object, later to be resolved
 		deferred = Q.defer()
 
 		# The URL of our web service
 		url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/#{options.method}/#{options.cutoff}"
 
-		# @allgenes = Utils.responseToJSON "{[At3g05360,7.48],[At3g25610,8.00],[At2g15480,8.37],[At3g25250,14.07],[At1g17180,14.70],[At2g15490,15.91],[At2g47000,16.12],[At1g17170,16.97],[At1g62300,17.32],[At4g05020,18.33],[At1g74360,19.21],[At3g48850,19.49],[At3g53150,20.20],[At3g50910,23.98],[At3g59700,25.10],[At1g78340,26.83],[At4g39670,28.46],[At3g47730,28.91],[At3g46930,29.22],[At4g12120,29.46],[At3g63380,32.63],[At1g67800,34.79],[At3g28210,35.68],[At3g22370,36.78],[At1g32940,37.47],[At1g08050,38.88],[At5g42010,39.24],[At5g48410,41.57],[At5g14730,41.64],[At3g22910,42.71],[At2g41380,42.77],[At5g20910,43.99],[At5g18270,44.90],[At1g10050,45.92],[At4g24160,46.10],[At2g32020,46.62],[At1g68690,46.90],[At3g09010,49.40],[At2g43000,51.22],[At1g62840,52.25],[At4g26470,54.86],[At3g13100,56.00],[At1g02220,59.33],[At4g22530,60.07],[At1g01340,60.10],[At5g40010,61.11],[At4g37370,63.95],[At5g02780,64.17],[At1g69930,64.25],[At3g54420,65.73],[At1g65690,66.87],[At5g48400,67.08],[At5g62480,70.16],[At4g13180,70.89],[At4g39270,71.75],[At5g42830,72.99],[At3g09270,73.00],[At2g38250,73.68],[At1g74590,73.89],[At5g67340,74.67],[At4g22070,75.26],[At2g37980,75.89],[At3g48450,77.63],[At2g41730,78.49],[At3g26470,78.69],[At1g23550,79.90],[At1g32350,81.24],[At1g69790,84.12],[At1g01010,87.24],[At5g54860,89.06],[At3g44190,89.43],[At3g10500,89.47],[At3g57380,90.42],[At5g11210,90.86],[At1g71530,92.65],[At5g38900,93.25],[At5g57480,94.60],[At3g28580,96.98],[At4g18950,97.86],[At2g29480,98.29],[At3g03610,98.87]}"
-		# @allgenes = Utils.responseToJSON "{[At3g05360,1.0],[At3g25610,2.00],[At2g15480,8.37],[At3g25250,14.07],[At1g17180,14.70],[At2g15490,15.91],[At2g47000,16.12],[At1g17170,16.97]}"
-
-		# deferred.resolve true
 		# Make a request to the web service
 		request.get url, (response) =>
 
@@ -92,6 +101,7 @@ class App
 			# Why aren't they returning JSON??
 			# deferred.resolve Utils.responseToJSON response.text
 			@allgenes = Utils.responseToJSON response.text
+			console.log "ALLGENES", @allgenes
 			deferred.resolve true
 
 		# Return our promise
@@ -137,26 +147,39 @@ class App
 		# @graph = new Graph @allgenes, @
 
 	rendertable: (genes) =>
+
+		if genes.length < 1
+			template = require './templates/noresults.hbs'
+			$('#atted-table').html template {}
+		else
+			template = require './templates/table.hbs'
+			console.log "sorting..."
+
+			min = d3.min genes, (d) -> d.score
+
+			genes = _.sortBy genes, (item) ->
+				if min < 1
+					-item.score
+				else
+					item.score
+
+			$("#{@opts.target.selector} > div.atted-table-wrapper > table.atted-table").html template {genes: genes}
+		 	# $('#atted-table').html template {genes: genes}
 		
 		# Sort our genes by score
-		genes = _.sortBy genes, (item) ->
-		 	item.score
+		
 
-		toolbartemplate = require './templates/tools.hbs'
-		$('#toolbar').html toolbartemplate {mediator: mediator}
-		$('#clickable').on "click", ()->
-			mediator.publish "switch-score", "mr"
+		# toolbartemplate = require './templates/tools.hbs'
 
-		$('#clickable2').on "click", ()->
-			mediator.publish "adddata", "mr"
+		# $("#{@opts.target.selector} > div.toolbar").html toolbartemplate {mediator: mediator}
 
-		template = require './templates/table.hbs'
-		$('#atted-table').html template {genes: genes}
+		# $('.reload').on "click", ()->
+		# 	mediator.publish "switch-score"
 
-		$(document.body).on "click", ".dropdown-menu li", (event) ->
-			$target = $(event.currentTarget)
-			$target.closest(".btn-group").find("[data-bind=\"label\"]").text($target.text()).end().children(".dropdown-toggle").dropdown "toggle"
-			false
+		# template = require './templates/table.hbs'
+		# $('#atted-table').html template {genes: genes}
+
+
 
 
 module.exports = App

@@ -1,10 +1,12 @@
 mediator = require './Events'
+$ = require 'jquery'
 
 Utils =
 
 	responseToJSON: (raw) ->
 
-		mediator.publish "wat", 7, "hi", {one: 1}
+		if raw is "{}"
+			return []
 
 		raw.substring(2, raw.length - 2).split('],[').map (next) ->
 			split = next.split(',')
