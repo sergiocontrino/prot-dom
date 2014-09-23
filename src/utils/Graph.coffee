@@ -7,7 +7,7 @@ class Graph
 
 	lineData = []
 
-	allmargin = 25
+	allmargin = 35
 
 	bisectScore = d3.bisector((d) -> d.score ).left
 
@@ -37,7 +37,7 @@ class Graph
 		
 		# Get the width and height of our SVG container
 		width = parseInt(d3.select("#viz").style("width")) - allmargin*2
-		height = parseInt(d3.select("#viz").style("height")) - allmargin*2;
+		height = parseInt(d3.select("#viz").style("height")) - allmargin*1.5
 
 		# Append an SVG element for rendering
 		@svg = d3.select("#viz").append("svg").attr("width", width + allmargin*2).attr("height", height + allmargin*2).append("g").attr("transform", "translate(" + allmargin + "," + allmargin + ")")
@@ -58,27 +58,40 @@ class Graph
 			.attr('id', 'clip-selected')
 			.append("rect")
 			.attr("id", "clipping-selected-rect")
+			.style("stroke", "none")
 			.attr('width', 0)
 			.attr('height', height)
 			.attr('x', 0)
 			.attr('y', 0)
 
-		unselectedClipPath = @svg.select("defs")
-			.append("clipPath")
-			.attr('id', 'clip-unselected')
+		unselectedMask = @svg.select("defs")
+			.append("mask")
+			.attr('id', 'mask-unselected')
+			.append("rect")
+			.attr("id", "mask-unselected-rect")
+			.attr('width', 100)
+			.attr('height', height)
+			.attr('x', 0)
+			.attr('y', 0)
+			.attr("fill", "white")
 
-		unselectedClipPath.append("rect")
-			.attr("id", "clipping-unselected-rect1")
-			.attr('width', 0)
-			.attr('height', height)
-			.attr('x', 0)
-			.attr('y', 0)
-		unselectedClipPath.append("rect")
-			.attr("id", "clipping-unselected-rect2")
-			.attr('width', 0)
-			.attr('height', height)
-			.attr('x', 0)
-			.attr('y', 0)
+
+		# unselectedClipPath = @svg.select("defs")
+		# 	.append("clipPath")
+		# 	.attr('id', 'clip-unselected')
+
+		# unselectedClipPath.append("rect")
+		# 	.attr("id", "clipping-unselected-rect1")
+		# 	.attr('width', 0)
+		# 	.attr('height', height)
+		# 	.attr('x', 0)
+		# 	.attr('y', 0)
+		# unselectedClipPath.append("rect")
+		# 	.attr("id", "clipping-unselected-rect2")
+		# 	.attr('width', 0)
+		# 	.attr('height', height)
+		# 	.attr('x', 0)
+		# 	.attr('y', 0)
 
 
 		# Background fillter
@@ -86,7 +99,7 @@ class Graph
 			.attr("class", "background")
 			.attr("width", width)
 			.attr("height", height)
-			.attr("fill", "#272822")
+			.attr("fill", "#428bca")
 			.attr("fill-opacity", "1")
 
 
@@ -98,19 +111,19 @@ class Graph
 			.append("text")
 			# .attr("transform", "translate(" + (width / 2) + ",0") #.attr("transform", "rotate(-90) translate(-" + height + ", 0)")
 			.attr("x", width / 2)
-			.attr("y", height - 12)
+			.attr("y", -12)
 			.attr("dy", "1em")
 			.attr("class", "x axis label")
 			.style("text-anchor", "middle")
 			.text "Count"
 
-		# Brush ON
-		@svg.append("rect")
-			.attr("class", "backgroundblue")
-			.attr("width", width)
-			.attr("height", height)
-			.attr("fill", "#428BCA")
-			.attr("opacity", "1")
+		# # Brush ON
+		# @svg.append("rect")
+		# 	.attr("class", "backgroundblue")
+		# 	.attr("width", width)
+		# 	.attr("height", height)
+		# 	.attr("fill", "#428BCA")
+		# 	.attr("opacity", "1")
 
 		@svg.append("g").attr("class", "y axis")
 			.call(yAxis)
@@ -128,6 +141,8 @@ class Graph
 			.datum(@lineData)
 			.attr("class", "line unselected")
 			.attr "d", line
+			# .attr("mask", "url(#mask-unselected)")
+			# .style("filter", "url(#blurry)")
 
 		@svg.append("path")
 			.datum(@lineData)
@@ -147,6 +162,8 @@ class Graph
 
 		xScale.domain d3.extent @lineData, (d) -> d.index
 		yScale.domain d3.extent @lineData, (d) -> d.score
+
+
 
 
 
@@ -179,7 +196,29 @@ class Graph
 
 	newdata: (values) ->
 
-		@lineData = @transform values
+		console.log "NEW DATA HAS BEEN CALLED WITH VALUES ", values
+
+		if values.length > 0
+			@lineData = @transform values
+		else
+			console.log "resettings"
+			@lineData = []
+
+		# @brush = d3.svg.brush().x(xScale).on("brush", @brushed)
+		# brush.extent([0,0]);
+
+		@brushed();
+
+		@svg.select("#clipping-selected-rect")
+			.attr("x", 0)
+			.attr("width", 0)
+
+		@svg.select("#mask-unselected-rect")
+			.attr("x", 0)
+			.attr("width", 0)
+
+		# @lineData = @transform values
+		
 		do @rescale
 
 		@svg.select('.x.axis').attr("transform", "translate(0," + height + ")").call(xAxis);
@@ -189,45 +228,50 @@ class Graph
 
 
 
+
 	brushed: () =>
 
+
 		extent = @brush.extent();
-		console.log "extent", extent
-		
-		
+		console.log "brushed has been called with extent", extent
 
 		@svg.select("#clipping-selected-rect")
 			.attr("x", xScale extent[0])
 			.attr("width", xScale(extent[1]) - xScale(extent[0]))
 
-		@svg.select('#clipping-unselected-rect1')
-			.attr("width", xScale extent[0])
+		@svg.select("#mask-unselected-rect")
+			.attr("x", xScale extent[0])
+			.attr("width", xScale(extent[1]) - xScale(extent[0]))
 
-		@svg.select('#clipping-unselected-rect2')
-			.attr("x", xScale extent[1])
-			.attr("width", width)
+		# @svg.select('#clipping-unselected-rect1')
+		# 	.attr("width", xScale extent[0])
+
+		# @svg.select('#clipping-unselected-rect2')
+		# 	.attr("x", xScale extent[1])
+		# 	.attr("width", width)
 
 		sliced = @lineData.slice Math.ceil(extent[0] - 1), Math.floor(extent[1])
 
+		console.log "sliced", sliced
 
-		# beginning = @lineData[bisectScore(@lineData, extent[0])];
+
+		beginning = @lineData[bisectScore(@lineData, extent[0])];
 		end = @lineData[bisectScore(@lineData, extent[1])];
 
-		console.log "end", end
 
-		# console.log "-----------"
-		# console.log "EXTENT", extent
-		# console.log "Slicked", sliced
-		# console.log "beginning", beginning
-		# console.log "end", end
 
 		# Send the sliced data to our parent so it can render the table
-		@parent.talkValues(extent, sliced);
+		@parent.talkValues(extent, sliced, @lineData.length);
 
 	resize: =>
 
+		# widthuntouched = parseInt(d3.select("#viz").style("width")
+		
 		width = parseInt(d3.select("#viz").style("width")) - allmargin*2
-		height = parseInt(d3.select("#viz").style("height")) - allmargin*2;
+		height = parseInt(d3.select("#viz").style("height")) - allmargin*1.5;
+
+		d3.select(".background").attr("width", width)
+
 
 		xScale.range [0,width]
 
@@ -249,7 +293,7 @@ class Graph
 		# TODO: Fix the following selection
 		d3.select('svg').attr("width", width + allmargin*2)
 		# d3.select(".background").attr("width", xScale(@lastcutoff.index))
-		d3.select(".backgroundblue").attr("width", width)
+		# d3.select(".backgroundblue").attr("width", width)
 		@
 
 module.exports = Graph

@@ -26,16 +26,30 @@
 	padding: 2px;
 }
 */
+
+.toolbar {
+	margin: 0 35px 0 35px;
+	float: left;
+}
+
+.stats {
+	float: left;
+	font-size: 10px;
+}
+
+
 .atted-table-wrapper {
 	max-height: 150px;
 	height: 150px;
 	overflow-y: scroll;
 	background: #EBEBEB;
+	margin: 0 35px 0 35px;
+	clear: both;
 }
 
 .atted-controls {
-	margin-left: 25px;
-	margin-right: 25px;
+	margin-left: 35px;
+	margin-right: 35px;
 }
 
 .axis {

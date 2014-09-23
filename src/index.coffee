@@ -18,6 +18,9 @@ class App
 		# Turn our taret string into a jquery object
 		@opts.target = $ @opts.target
 
+		if !@opts.cutoff then @opts.cutoff = 0.6
+		if !@opts.method then @opts.method = 'cor'
+
 
 		# Listener: Switching score types:
 		mediator.subscribe "switch-score", =>
@@ -83,7 +86,7 @@ class App
 
 	requery: (options) ->
 
-		console.log "requerying with options", options
+		# console.log "requerying with options", options
 		Q.when(@call(options)).done @renderapp
 
 	call: (options) =>
@@ -101,13 +104,13 @@ class App
 			# Why aren't they returning JSON??
 			# deferred.resolve Utils.responseToJSON response.text
 			@allgenes = Utils.responseToJSON response.text
-			console.log "ALLGENES", @allgenes
+			# console.log "ALLGENES", @allgenes
 			deferred.resolve true
 
 		# Return our promise
 		deferred.promise
 
-	talkValues: (extent, values) ->
+	talkValues: (extent, values, total) ->
 
 		# console.log "values", values
 
@@ -117,7 +120,9 @@ class App
 
 		template = require("./templates/selected.hbs")
 
-		$('#stats').html template {values: values, opts: opts}
+		$("#{@opts.target.selector} > div.stats").html template {values: values, opts: opts, total: total}
+
+		# $('#stats').html template {values: values, opts: opts}
 		@rendertable(values)
 
 
@@ -131,6 +136,8 @@ class App
 		@graph.update score
 
 	renderapp: =>
+
+		console.log "renderapp called, allgenes are ", @allgenes
 
 		# template = require './templates/displayer.hbs'
 
@@ -148,12 +155,26 @@ class App
 
 	rendertable: (genes) =>
 
+		console.log "rendertable called with ", genes
+
+
 		if genes.length < 1
+			console.log "we have no results"
 			template = require './templates/noresults.hbs'
-			$('#atted-table').html template {}
+			# $('#atted-table').html template {}
+			$("#{@opts.target.selector} > div.atted-table-wrapper").html template {}
+
+
 		else
+			# Check to see if the table needs to be added
+
+			table = $("#{@opts.target.selector} > div.atted-table-wrapper > table.atted-table")
+			console.log "TABLE LENGTH", table.length
+			if !table.length then $("#{@opts.target.selector} > div.atted-table-wrapper").append("<table class='atted-table'></table>")
+
+
 			template = require './templates/table.hbs'
-			console.log "sorting..."
+			# console.log "sorting..."
 
 			min = d3.min genes, (d) -> d.score
 
