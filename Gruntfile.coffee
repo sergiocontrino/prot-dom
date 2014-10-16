@@ -96,7 +96,7 @@ module.exports = taskManager = (grunt) ->
     # contrib-watch config
     # (https://github.com/gruntjs/grunt-contrib-watch/blob/master/README.md)
     watch:
-      files: 'src/**/*.*'
+      files: 'src/**/*.coffee'
       tasks: ['do']
 
   # Load npm tasks.

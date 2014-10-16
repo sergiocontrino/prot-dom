@@ -6,14 +6,22 @@ style = require('./styles/app.css');
 Spinner = require 'spin'
 $ = require 'jquery'
 Graph = require './utils/Graph'
-d3 = require 'd3'
+# Graph = {}
+# NewGraph = require './utils/NewGraph'
+
 mediator = require './utils/Events'
 Handlebars = require 'hbsfy/runtime'
 
 
 class App
 
-	constructor: (@opts) ->
+	constructor: (@opts, @callback) ->
+
+		console.log opts.query
+
+
+
+
 
 		# Turn our taret string into a jquery object
 		@opts.target = $ @opts.target
@@ -21,13 +29,20 @@ class App
 		if !@opts.cutoff then @opts.cutoff = 0.6
 		if !@opts.method then @opts.method = 'cor'
 
-
 		# Listener: Switching score types:
 		mediator.subscribe "switch-score", =>
 			method = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[type='radio']:checked");
 			cutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols > input.cutoff");
-			console.log "cutoff", cutoff
 			if method.length > 0 and cutoff.length > 0 then @requery {method: method.val(), cutoff: cutoff.val()}
+
+		mediator.subscribe "load-defaults", =>
+
+			radioMethod = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[class='" + @opts.method + "']");
+			textCutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input.cutoff");
+			radioMethod.prop("checked", true)
+			textCutoff.val(@opts.cutoff)
+
+			@requery {method: @opts.method, cutoff: @opts.cutoff}
 
 		# Fetch our loading template
 		template = require("./templates/shell.hbs");
@@ -45,6 +60,9 @@ class App
 
 		$('.reload').on "click", ()->
 			mediator.publish "switch-score"
+
+		$('.defaults').on "click", ()->
+			mediator.publish "load-defaults"
 
 		# Options for the spinner:
 		opts =
@@ -70,9 +88,12 @@ class App
 
 		# Get the spinner container from the loading template
 		@loadingtarget = $ '#searching_spinner_center'
+		@loadingtarget = $("#{@opts.target.selector} > div.atted-table-wrapper")
+
+		console.log "spinner", @loadingtarget
 
 		# Add the spinner to the DOM
-		# @loadingtarget.append @spinner.el
+		@loadingtarget.append @spinner.el
 
 		# First make a request to the web service, then render the results
 		# when the request is fulfilled
@@ -80,19 +101,31 @@ class App
 
 		Q.when(@call(@opts)).done @renderapp
 
+		# console.log "value from ask", @ask(@opts)
+
+
+		# Q.when(@ask(@opts)).done (values) ->
+		# 	console.log "finished asking", values
+
 
 	# query: (opts) ->
 	# 	Q.when(@call(opts)).done @renderapp
+
+
+	getValues: () ->
+		"test"
+
+
 
 	requery: (options) ->
 
 		# console.log "requerying with options", options
 		Q.when(@call(options)).done @renderapp
 
-	call: (options) =>
+	call: (options, deferred) =>
 
 		# Create our deferred object, later to be resolved
-		deferred = Q.defer()
+		deferred ?= Q.defer()
 
 		# The URL of our web service
 		url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/#{options.method}/#{options.cutoff}"
@@ -100,12 +133,18 @@ class App
 		# Make a request to the web service
 		request.get url, (response) =>
 
+			console.log "making initial request"
 			# Resolve our promise and return the parsed web service response
 			# Why aren't they returning JSON??
 			# deferred.resolve Utils.responseToJSON response.text
 			@allgenes = Utils.responseToJSON response.text
-			# console.log "ALLGENES", @allgenes
-			deferred.resolve true
+
+			if @allgenes.length >= options.guarantee
+				
+				deferred.resolve true
+			else
+				options.cutoff -= 0.1
+				@call(options, deferred)
 
 		# Return our promise
 		deferred.promise
@@ -114,9 +153,14 @@ class App
 
 		# console.log "values", values
 
+
 		opts =
-			lowest: Math.round(extent[0] * 100) / 100 
-			highest: Math.round(extent[1] * 100) / 100 
+			lowest: if values.length < 1 then 0 else values[0].score
+			# lowest: values[0].score
+			highest: if values.length < 1 then 0 else values[values.length - 1].score
+			# highest: values[values.length - 1].score
+			# lowest: Math.round(extent[0] * 100) / 100 
+			# highest: Math.round(extent[1] * 100) / 100 
 
 		template = require("./templates/selected.hbs")
 
@@ -137,8 +181,6 @@ class App
 
 	renderapp: =>
 
-		console.log "renderapp called, allgenes are ", @allgenes
-
 		# template = require './templates/displayer.hbs'
 
 		@spinner.stop()
@@ -150,16 +192,22 @@ class App
 		# that = @
 		# $("#fader").on("input", () -> that.filter this.value);
 
-		if @graph? then @graph.newdata(@allgenes, @) else @graph = new Graph @allgenes, @
-		# @graph = new Graph @allgenes, @
+		# if @graph? then @graph.newdata(@allgenes, @) else @graph = new Graph @allgenes, @
+		# if @graph? then @graph.newdata(@allgenes, @) else @graph = new Graph @allgenes, @
+		@graph = new Graph @allgenes, @
+
+		newarr = []
+		_.each @allgenes, (next) ->
+			newarr.push next.name
+
+		do callback newarr
 
 	rendertable: (genes) =>
 
-		console.log "rendertable called with ", genes
 
 
 		if genes.length < 1
-			console.log "we have no results"
+
 			template = require './templates/noresults.hbs'
 			# $('#atted-table').html template {}
 			$("#{@opts.target.selector} > div.atted-table-wrapper").html template {}
@@ -169,14 +217,15 @@ class App
 			# Check to see if the table needs to be added
 
 			table = $("#{@opts.target.selector} > div.atted-table-wrapper > table.atted-table")
-			console.log "TABLE LENGTH", table.length
-			if !table.length then $("#{@opts.target.selector} > div.atted-table-wrapper").append("<table class='atted-table'></table>")
+
+			if !table.length then $("#{@opts.target.selector} > div.atted-table-wrapper").html("<table class='atted-table collection-table'></table>")
 
 
 			template = require './templates/table.hbs'
-			# console.log "sorting..."
 
-			min = d3.min genes, (d) -> d.score
+
+			# min = d3.min genes, (d) -> d.score
+			min = []
 
 			genes = _.sortBy genes, (item) ->
 				if min < 1

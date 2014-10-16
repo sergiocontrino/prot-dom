@@ -3,6 +3,8 @@
 
     <head>
         <script charset="utf-8" type="text/javascript" src="build/atted-displayer-0.0.1.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.araport.org/js/intermine/im-tables/latest/imtables.css">
+        <script charset="UTF-8" type="text/javascript" src="https://cdn.araport.org/js/intermine/im-tables/latest/imtables-bundled.js"></script>
 
     </head>
 
@@ -12,19 +14,53 @@
 
         <div id="displayercontainer"></div>
 
+        <div id="query-container">
+         <p class="apology">
+          Please be patient while the results of your query are retrieved.
+         </p>
+        </div>
+
+
+
         <script type="text/javascript">
+
+            var callback = function(values) {
+
+                console.log("values...", values);
+
+
+              var options = {
+                type: 'table',
+                url: 'http://intermine.modencode.org/thalemineval',
+                token: 'Z134B9n1e88ejdw210Ba',
+                height: 400,
+                query: {"model":{"name":"genomic"},"select":["Gene.primaryIdentifier","Gene.symbol","Gene.name","Gene.organism.shortName"],"orderBy":[{"Gene.primaryIdentifier":"ASC"}],"where":[{"path":"Gene.primaryIdentifier","op":"ONE OF","code":"A","values":values}]}
+              };
+              jQuery('#query-container').imWidget(options);
+
+            }
 
             var opts = 
                 {                
                     target: '#displayercontainer',
                     AGIcode: 'At5g54270',
                     method: 'cor',
-                    cutoff: 0.7
+                    cutoff: 0.8,
+                    guarantee: 4
                 }
 
-            var displayer = new AttedDisplayer(opts);
+            var displayer = new AttedDisplayer(opts, callback);
+
 
         </script>
+
+
+
+
+
+
+
+
     </body>
 
 </html>
