@@ -10,7 +10,8 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-copy": "*",
     "grunt-contrib-watch": "*",
-    "grunt-browserify": "*"
+    "grunt-browserify": "*",
+    "imjs": "~3.6.1"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "spin": "0.0.1",
     "superagent": "~0.18.2",
     "d3": "~3.4.11",
-    "mediator-js": "~0.9.8"
+    "mediator-js": "~0.9.8",
+    "imjs": "~3.6.1"
   }
 }

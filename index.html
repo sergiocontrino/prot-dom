@@ -14,7 +14,7 @@
 
         <div id="displayercontainer"></div>
 
-        <div id="query-container">
+        <div id="query-container" style="display: block; height: 300px">
          <p class="apology">
           Please be patient while the results of your query are retrieved.
          </p>
@@ -32,8 +32,6 @@
               var options = {
                 type: 'table',
                 url: 'http://intermine.modencode.org/thalemineval',
-                token: 'Z134B9n1e88ejdw210Ba',
-                height: 400,
                 query: {"model":{"name":"genomic"},"select":["Gene.primaryIdentifier","Gene.symbol","Gene.name","Gene.organism.shortName"],"orderBy":[{"Gene.primaryIdentifier":"ASC"}],"where":[{"path":"Gene.primaryIdentifier","op":"ONE OF","code":"A","values":values}]}
               };
               jQuery('#query-container').imWidget(options);

@@ -11,13 +11,16 @@ Graph = require './utils/Graph'
 
 mediator = require './utils/Events'
 Handlebars = require 'hbsfy/runtime'
+# intermine = require 'imjs'
+# intermine = require 'imjs'
+imjs = require '../bower_components/imjs/js/im'
 
 
 class App
 
 	constructor: (@opts, @callback) ->
 
-		console.log opts.query
+		# console.log "intermine", intermine
 
 
 
@@ -119,7 +122,7 @@ class App
 
 	requery: (options) ->
 
-		# console.log "requerying with options", options
+		# console.log "reuqerying with options", options
 		Q.when(@call(options)).done @renderapp
 
 	call: (options, deferred) =>
@@ -129,18 +132,21 @@ class App
 
 		# The URL of our web service
 		url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/#{options.method}/#{options.cutoff}"
-
+		# url = "http://intermine.modencode.org/thalemineval/service/version"
 		# Make a request to the web service
 		request.get url, (response) =>
 
 			console.log "making initial request"
+
+			console.log "RESPONSE", response
 			# Resolve our promise and return the parsed web service response
 			# Why aren't they returning JSON??
 			# deferred.resolve Utils.responseToJSON response.text
 			@allgenes = Utils.responseToJSON response.text
 
+			# deferred.resolve true
+
 			if @allgenes.length >= options.guarantee
-				
 				deferred.resolve true
 			else
 				options.cutoff -= 0.1

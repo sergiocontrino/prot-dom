@@ -50,6 +50,7 @@ module.exports = taskManager = (grunt) ->
           browserifyOptions:
               standalone: 'AttedDisplayer'
               debug: true
+              noParse: ['./node_modules/imjs/im.js']
 
     # contrib-uglify config
     # (https://github.com/gruntjs/grunt-contrib-uglify/blob/master/README.md)
