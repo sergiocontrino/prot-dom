@@ -32,7 +32,7 @@
 */
 
 .toolbar {
-	margin: 0 35px 0 35px;
+	/*margin: 0 35px 0 35px;*/
 	clear:  both;
 }
 
@@ -48,8 +48,15 @@
 	height: 150px;
 	overflow-y: scroll;
 	background: #EBEBEB;
-	margin: 0 35px 0 35px;
 	clear: both;
+}
+
+
+.atted-loading-message {
+	height: 150px;
+	max-height: 150px;
+	text-align: center;
+	position: relative;
 }
 
 .atted-controls {
