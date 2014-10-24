@@ -1,6 +1,5 @@
 # Project ignores.
 lib
-build
 
 # Node.js/npm stuff
 logs
