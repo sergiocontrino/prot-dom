@@ -1,20 +1,94 @@
-#atted-container {
+.atted-table{
 	font-family: sans-serif;
 	-webkit-font-smoothing: antialiased;
-}
-
-#atted-container > #atted-table {
-	font-family: sans-serif;
+	font-size: 12px;
 	width: 100%;
+	overflow: y;
 }
 
-#atted-container > #atted-table th {
-	background-color: black;
-	color: white;
-	padding: 4px;
+.toolcontrols {
+	padding: 5px 0 5px 0;
 }
 
-#atted-container > #atted-table td {
-	background-color: #EBEBEB;
-	padding: 4px;
+
+
+.toolbar {
+	/*margin: 0 35px 0 35px;*/
+	clear:  both;
 }
+
+.atted-table-wrapper {
+	max-height: 150px;
+	height: 150px;
+	overflow-y: scroll;
+	background: #EBEBEB;
+	clear: both;
+}
+
+
+.atted-loading-message {
+	height: 150px;
+	max-height: 150px;
+	text-align: center;
+	position: relative;
+}
+
+.atted-controls {
+	margin-left: 35px;
+	margin-right: 35px;
+}
+
+/*.axis {
+	font-family: sans-serif;
+	font-size: 9px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  /*display: none;*/
+}
+
+.x.axis.label {
+	fill: white;
+	font-size: 10px;
+}
+.y.axis.label {
+	fill: white;
+	font-size: 10px;
+}
+
+.line {
+  fill: none;
+  stroke: white;
+  stroke-width: 1px;
+}
+
+.line.unselected {
+	fill: none;
+	stroke: black;
+	stroke-width: 1px;
+}
+
+
+.line.selected {
+	fill: none;
+	stroke: white;
+	stroke-width: 1px;
+}
+
+.viz {
+	width: 100%;
+	height: 150px;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill: white;
+  fill-opacity: .5;
+  shape-rendering: crispEdges;
+}*/

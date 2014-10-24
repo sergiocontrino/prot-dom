@@ -1,0 +1,16 @@
+<thead>
+	<tr>
+		<th>AGI id</th>
+		<th>Symbol</th>
+		<th>Score</th>
+	</tr>
+</thead>
+<tbody>
+	{{#each genes}}
+	<tr>
+		<td><a href="report.do?id={{id}}">{{summary.primaryIdentifier}}</a></td>
+		<td>{{summary.symbol}}
+		<td>{{score}}</td>
+	</tr>
+	{{/each}}
+</tbody>

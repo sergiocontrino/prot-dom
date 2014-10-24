@@ -2,18 +2,54 @@
 <html>
 
     <head>
-        <script type="text/javascript" src="build/atted-displayer.min.js"></script>
+        <script charset="utf-8" type="text/javascript" src="build/atted-displayer-1.0.0.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.araport.org/js/intermine/im-tables/latest/imtables.css">
+        <script charset="UTF-8" type="text/javascript" src="https://cdn.araport.org/js/intermine/im-tables/latest/imtables-bundled.js"></script>
     </head>
 
     <body>
+
         <div id="displayercontainer"></div>
+
+        <div id="query-container" style="display: block; height: 300px">
+            <p class="apology">Please be patient while the results of your query are retrieved.</p>
+        </div>
+        
         <script type="text/javascript">
-            var opts = {
-                target: '#displayercontainer',
-                AGIcode: 'At3g47780',
+
+            var callback = function(values) {
+
+                var options = {
+                type: 'table',
+                url: 'http://intermine.modencode.org/thalemineval',
+                query: {"model":{"name":"genomic"},"select":["Gene.primaryIdentifier","Gene.symbol","Gene.name","Gene.organism.shortName"],"orderBy":[{"Gene.primaryIdentifier":"ASC"}],"where":[{"path":"Gene.primaryIdentifier","op":"ONE OF","code":"A","values":values}]}
+                };
+
+                if (values == null || values.length < 1) {
+                    jQuery('#query-container').html("No Results");
+                } else {
+                    jQuery('#query-container').imWidget(options);
+                }
+
             }
-            var displayer = new AttedDisplayer(opts);
+
+            var queryhook = function() {
+                console.log("prehook fired...");
+            }
+
+            var opts = {                
+                target: '#displayercontainer',
+                AGIcode: 'At5g54270',
+                method: 'cor',
+                cutoff: 0.99,
+                guarantee: 10,
+                service: "http://intermine.modencode.org/thalemineval/service"
+            }
+
+            var displayer = new AttedDisplayer(opts, callback, queryhook);
+
         </script>
+
     </body>
 
 </html>

@@ -47,9 +47,10 @@ module.exports = taskManager = (grunt) ->
         options:
           transform: ['hbsfy', 'cssify']
           # Add global aliases for browserify modules.
-          bundleOptions:
+          browserifyOptions:
               standalone: 'AttedDisplayer'
               debug: true
+              noParse: ['./node_modules/imjs/im.js']
 
     # contrib-uglify config
     # (https://github.com/gruntjs/grunt-contrib-uglify/blob/master/README.md)
@@ -96,7 +97,7 @@ module.exports = taskManager = (grunt) ->
     # contrib-watch config
     # (https://github.com/gruntjs/grunt-contrib-watch/blob/master/README.md)
     watch:
-      files: 'src/**/*.*'
+      files: 'src/**/*.coffee'
       tasks: ['do']
 
   # Load npm tasks.
