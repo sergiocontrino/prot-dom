@@ -1,6 +1,6 @@
 {
   "name": "atted-displayer",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "devDependencies": {
     "grunt": "0.4.x",
     "grunt-cli": ">=0.1.6",
@@ -34,8 +34,6 @@
     "hbsfy": "~2.1.0",
     "spin": "0.0.1",
     "superagent": "~0.18.2",
-    "d3": "~3.4.11",
-    "mediator-js": "~0.9.8",
-    "imjs": "~3.6.1"
+    "mediator-js": "~0.9.8"
   }
 }
