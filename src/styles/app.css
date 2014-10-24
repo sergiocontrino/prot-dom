@@ -2,8 +2,6 @@
 	font-family: sans-serif;
 	-webkit-font-smoothing: antialiased;
 	font-size: 12px;
-
-
 	width: 100%;
 	overflow: y;
 }
@@ -14,34 +12,10 @@
 
 
 
-/*#atted-container > #atted-table-wrapper > #atted-table {
-	font-family: sans-serif;
-	width: 100%;
-}
-
-#atted-container > #atted-table-wrapper > #atted-table th {
-	background-color: black;
-	color: white;
-	padding: 2px;
-}
-
-#atted-container > #atted-table-wrapper > #atted-table td {
-	background-color: #EBEBEB;
-	padding: 2px;
-}
-*/
-
 .toolbar {
 	/*margin: 0 35px 0 35px;*/
 	clear:  both;
 }
-
-/*.stats {
-	font-size: 10px;
-	text-align: center;
-	padding-bottom: 5px;
-}*/
-
 
 .atted-table-wrapper {
 	max-height: 150px;
@@ -64,7 +38,7 @@
 	margin-right: 35px;
 }
 
-.axis {
+/*.axis {
 	font-family: sans-serif;
 	font-size: 9px;
 }
@@ -117,4 +91,4 @@
   fill: white;
   fill-opacity: .5;
   shape-rendering: crispEdges;
-}
+}*/
