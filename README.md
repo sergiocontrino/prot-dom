@@ -55,5 +55,8 @@ To view the tool, serve the home directory (in a separate terminal window):
 <code>serve -p 9001</code>
 <code>python SimpleHTTPServer 9001</code>
 
-##Useage##
+##Usage##
+
+
+
 
