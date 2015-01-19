@@ -52,8 +52,9 @@ The build process runs automatically when files in the /src folder are modified:
 
 To view the tool, serve the home directory (in a separate terminal window):
 
-<code>serve -p 9001</code>
-<code>python SimpleHTTPServer 9001</code>
+ <code>serve -p 9001</code>
+ or
+ <code>python SimpleHTTPServer 9001</code>
 
 ##Usage##
 
