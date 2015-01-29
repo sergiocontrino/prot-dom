@@ -5,24 +5,52 @@
         <script charset="utf-8" type="text/javascript" src="build/atted-displayer-1.0.0.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.araport.org/js/intermine/im-tables/latest/imtables.css">
         <script charset="UTF-8" type="text/javascript" src="https://cdn.araport.org/js/intermine/im-tables/latest/imtables-bundled.js"></script>
+        <script charset="UTF-8" type="text/javascript" src="node_modules/biojs-vis-feature/build/viewer.js"></script>
+
+<!--
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+-->
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<!--
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+
+	<script src="node_modules/biojs-vis-feature/external/jquery.tooltip.js"></script>
+
+	<script src="node_modules/biojs-vis-feature/external/canvg.js"></script>
+
+	<script src="node_modules/biojs-vis-feature/external/rgbcolor.js"></script>
+
+	<script src="http://wzrd.in/bundle/biojs-vis-feature@0.0.5"></script>
+
+-->
+
+
     </head>
 
     <body>
+<h4>uh uh</h4>
+        <div id="yourDiv"></div>
+<hr>
 
         <div id="displayercontainer"></div>
 
         <div id="query-container" style="display: block; height: 300px">
             <p class="apology">Please be patient while the results of your query are retrieved.</p>
         </div>
-        
+
         <script type="text/javascript">
 
             var callback = function(values) {
 
                 var options = {
                 type: 'table',
-                url: 'http://intermine.modencode.org/thalemineval',
-                query: {"model":{"name":"genomic"},"select":["Gene.primaryIdentifier","Gene.symbol","Gene.name","Gene.organism.shortName"],"orderBy":[{"Gene.primaryIdentifier":"ASC"}],"where":[{"path":"Gene.primaryIdentifier","op":"ONE OF","code":"A","values":values}]}
+                url: 'http://modalone:8080/thaleminebuild',
+                //query: {"model":{"name":"genomic"},"select":["Gene.primaryIdentifier","Gene.symbol","Gene.name","Gene.organism.shortName"],"orderBy":[{"Gene.primaryIdentifier":"ASC"}],"where":[{"path":"Gene.primaryIdentifier","op":"ONE OF","code":"A","values":values}]}
+query: {"model":{"name":"genomic"},"select":["Protein.uniprotAccession","Protein.primaryIdentifier","Protein.primaryAccession","Protein.proteinDomains.primaryIdentifier","Protein.proteinDomainRegions.start","Protein.proteinDomainRegions.end","Protein.proteinDomainRegions.originalDb","Protein.proteinDomainRegions.originalId"],"orderBy":[{"Protein.uniprotAccession":"ASC"}],"where":[{"path":"Protein.uniprotName","op":"=","code":"A","value":"AMS_ARATH"}]}
+
                 };
 
                 if (values == null || values.length < 1) {
@@ -37,16 +65,127 @@
                 console.log("prehook fired...");
             }
 
-            var opts = {                
+            var opts = {
                 target: '#displayercontainer',
-                AGIcode: 'At5g54270',
+                AGIcode: 'AMS_ARATH',
                 method: 'cor',
                 cutoff: 0.99,
                 guarantee: 10,
-                service: "http://intermine.modencode.org/thalemineval/service"
+                service: "http://modalone:8080/thaleminebuild/service"
             }
 
+// var opts = {
+//     target: '#displayercontainer',
+//     AGIcode: 'At5g54270',
+//     method: 'cor',
+//     cutoff: 0.99,
+//     guarantee: 10,
+//     service: "http://intermine.modencode.org/thalemineval/service"
+// }
+
+
+
+
             var displayer = new AttedDisplayer(opts, callback, queryhook);
+
+
+
+
+
+var yourDiv = document.getElementById('yourDiv');
+var feature = require("biojs-vis-feature");
+// fakeServer(function(data){
+//   console.log(data);
+//   var obj = new feature({
+//     target: yourDiv.id,
+//     json: data,
+//     showSlider: true,
+//     show: true,
+//     showFeatureTooltipOnMouseOver: true,
+//   });
+
+//   //instance=obj
+
+//   obj.onAll(function(eventName,d){
+//     console.log(eventName, d);
+//   });
+// });
+
+function fakeServer(callback22){
+  var json = {
+    "featuresArray":[
+    {
+      "nonOverlappingStyle":{"heightOrRadius":10,"y":56},"type":"rect","featureEnd":73,"fillOpacity":0.5
+        ,"evidenceText":"UniProt","stroke":"#9B7057","height":10,"path":"","typeLabel":"Propeptide"
+        ,"featureLabel":"Propeptide","featureStart":1,"strokeWidth":1,"text":""
+        ,"centeredStyle":{"heightOrRadius":44,"y":73},"fill":"#9B7057","width":495
+        ,"typeCategory":"Molecule processing","typeCode":"SO:0001062","cy":56,"cx":27,"evidenceCode":""
+        ,"r":10,"featureId":"UNIPROTKB_Q8LAX3_PROPEP_1_73","rowsStyle":{"heightOrRadius":10,"y":169}
+      ,"featureTypeLabel":"propeptide","y":56,"x":27
+    }
+    ,{
+      "nonOverlappingStyle":{"heightOrRadius":10,"y":56},"type":"rect","featureEnd":96,"fillOpacity":0.5
+        ,"evidenceText":"UniProt","stroke":"#7DBAA4","height":10,"path":"","typeLabel":"Peptide"
+        ,"featureLabel":"Elicitor peptide 3","featureStart":74,"strokeWidth":1,"text":""
+        ,"centeredStyle":{"heightOrRadius":40,"y":75},"fill":"#7DBAA4","width":151
+        ,"typeCategory":"Molecule processing","typeCode":"SO:0001064","cy":56,"cx":529,"evidenceCode":""
+        ,"r":10,"featureId":"UNIPROTKB_Q8LAX3_PEPTIDE_74_96","rowsStyle":{"heightOrRadius":10,"y":157}
+      ,"featureTypeLabel":"active_peptide","y":56,"x":529
+    }
+    ]
+      ,"segment":"Q8LAx3"
+      ,"legend":{
+        "segment":{"yPosCentered":190,"text":"Q8LAX3","yPos":106,"xPos":15,"yPosNonOverlapping":106,"yPosRows":290}
+        ,"key":[
+        {
+          "label":{
+            "total":"1","yPosCentered":210,"text":"Peptide","yPos":126,"xPos":50
+              ,"yPosNonOverlapping":126,"yPosRows":310
+          }
+          ,"shape":{
+            "centeredStyle":{"heightOrRadius":5,"y":208},"text":""
+              ,"nonOverlappingStyle":{"heightOrRadius":5,"y":121},"width":30,"fill":"#7DBAA4"
+              ,"cy":121,"cx":15,"type":"rect","fillOpacity":0.5,"stroke":"#7DBAA4","height":5,"r":10
+              ,"path":"","rowsStyle":{"heightOrRadius":5,"y":305},"typeLabel":"Peptide","y":121
+              ,"strokeWidth":1,"x":15
+          }
+        }
+        ,{
+          "label":{
+            "total":"1","yPosCentered":210,"text":"Propeptide","yPos":126,"xPos":205
+              ,"yPosNonOverlapping":126,"yPosRows":310
+          }
+          ,"shape":{
+            "centeredStyle":{"heightOrRadius":5,"y":208},"text":""
+              ,"nonOverlappingStyle":{"heightOrRadius":5,"y":121},"width":30,"fill":"#9B7057"
+              ,"cy":121,"cx":170,"type":"rect","fillOpacity":0.5,"stroke":"#9B7057","height":5,"r":10
+              ,"path":"","rowsStyle":{"heightOrRadius":5,"y":305},"typeLabel":"Propeptide","y":121
+              ,"strokeWidth":1,"x":170
+          }
+        }
+        ]
+      }
+    ,"configuration":{
+      "requestedStop":96,"horizontalGridNumLines":2,"sequenceLineYCentered":95,"requestedStart":1
+        ,"gridLineHeight":12,"rightMargin":20,"belowRuler":30,"sequenceLength":96
+        ,"horizontalGridNumLinesNonOverlapping":2,"horizontalGridNumLinesCentered":6
+        ,"verticalGridLineLengthRows":284,"unitSize":6.875,"sizeYNonOverlapping":76,"style":"nonOverlapping"
+        ,"sequenceLineYRows":155,"sequenceLineY":54,"verticalGrid":false,"rulerY":20
+        ,"dasSources":"http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot","horizontalGrid":false
+        ,"pixelsDivision":50,"sizeY":76,"sizeX":700
+        ,"dasReference":"http://www.ebi.ac.uk/das-srv/uniprot/das/uniprot","sizeYRows":260,"aboveRuler":10
+        ,"rulerLength":660,"verticalGridLineLengthNonOverlapping":66,"sizeYKey":210,"sizeYCentered":160
+        ,"sequenceLineYNonOverlapping":54,"verticalGridLineLength":66,"horizontalGridNumLinesRows":8
+        ,"leftMargin":20,"nonOverlapping":true,"verticalGridLineLengthCentered":172
+    }
+  };
+  return callback22(json);
+}
+
+
+
+
+
 
         </script>
 

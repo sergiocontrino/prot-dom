@@ -14,10 +14,10 @@ class App
 	constructor: (@opts, @callback, @queryhook) ->
 
 		# Execute our prehook, if it exists.
-		@opts.origcutoff = @opts.cutoff
+		#@opts.origcutoff = @opts.cutoff
 		@defaultopts = _.clone @opts
 
-		# Turn our taret string into a jquery object
+		# Turn our target string into a jquery object
 		@opts.target = $ @opts.target
 		@currentcutoff = 0
 
@@ -87,7 +87,7 @@ class App
 		@wrapper = $("#{@opts.target.selector} > div.atted-table-wrapper")
 
 		@loadingmessage = $("#{@opts.target.selector} > div.atted-table-wrapper > div.atted-loading-message")
-		
+
 
 		@spinel = @wrapper.find(".searching_spinner_center")
 
@@ -101,7 +101,7 @@ class App
 		# Execute our pre-query hook, if it exists.
 		if @queryhook? then do @queryhook
 
-		
+
 		Q.when(@call(@opts, null, true))
 			.then @getResolutionJob
 			.then @waitForResolutionJob
@@ -117,16 +117,22 @@ class App
 
 	getResolutionJob: (genes) =>
 
-		
+
 		deferred = Q.defer()
-
+		#console.log @allgenes
 		# Pluck the gene names from our ATTED results
-		ids = _.pluck @allgenes, "name"
+		#ids = _.pluck @allgenes, "primaryIdentifier"
+		#ids = @allgenes[i][0]
+		ids = []
+		for key of @scoredict
+			ids.push key
+		console.log "+++", ids
 
+		console.log "plucked ids: ", ids
 		# Build our POST data
 		payload =
 			identifiers: ids
-			type: "Gene"
+			type: "ProteinDomain"
 			caseSensitive: true
 			wildCards: true
 
@@ -222,46 +228,86 @@ class App
 		# Create our deferred object, later to be resolved
 		deferred ?= Q.defer()
 
+		console.log "first call", options.cutoff
 		# The URL of our web service
-		url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/#{options.method}/#{options.cutoff}"
+		#url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/#{options.method}/#{options.cutoff}"
+
+		url = "http://modalone:8080/thaleminebuild/service/query/results?columnheaders=none" +
+  		      	"&format=json&query=%3Cquery%20name=%22%22%20model=%22genomic%22%20view=" +
+  			  	"%22Protein.proteinDomains.primaryIdentifier%20Protein.proteinDomainRegions.start%22%20longDescription=%22%22%3E%3Cconstraint%20path=%22Protein.uniprotName%22%20op=%22=%22%20value=%22AMS_ARATH%22/%3E%3C/query%3E"
+
 
 		# Make a request to the web service
 		request.get url, (response) =>
 
 
-			@allgenes = Utils.responseToJSON response.text
+			# @allgenes = Utils.responseToJSON response.text
 
-			if autocutoff and options.method.toUpperCase() is "COR"
+			# if autocutoff and options.method.toUpperCase() is "COR"
 
-				if @allgenes.length >= options.guarantee
+			# 	if @allgenes.length >= options.guarantee
 
-					@scoredict = {}
+			# 		@scoredict = {}
 
-					_.each @allgenes, (geneObj) =>
+			# 		_.each @allgenes, (geneObj) =>
 
-						@scoredict[geneObj.name] = geneObj.score
+			# 			@scoredict[geneObj.name] = geneObj.score
 
-					
-					deferred.resolve true
 
-				else if options.guarantee > 0 and options.cutoff > 0
+			# 		deferred.resolve true
 
-					options.cutoff -= 0.1
-					options.cutoff = options.cutoff.toFixed(3)
-					@call(options, deferred, true)
+			# 	else if options.guarantee > 0 and options.cutoff > 0
 
-				else
+			# 		options.cutoff -= 0.1
+			# 		options.cutoff = options.cutoff.toFixed(3)
+			# 		@call(options, deferred, true)
 
-					deferred.resolve @allgenes
+			# 	else
 
-			else
+			# 		deferred.resolve @allgenes
 
-				@scoredict = {}
+			# else
 
-				_.each @allgenes, (geneObj) =>
-					@scoredict[geneObj.name] = geneObj.score
+			# 	@scoredict = {}
 
-				deferred.resolve true
+			# 	_.each @allgenes, (geneObj) =>
+			# 		@scoredict[geneObj.name] = geneObj.score
+
+			# 	deferred.resolve true
+
+			#@allgenes = response.text
+			
+			console.log "response ", response.text
+			#console.log "allgenes ", @allgenes[5]
+			#response.text['results'][0]
+
+			parsedData = JSON.parse(response.text)
+			console.log "MO", parsedData.results
+
+			# for i of parsedData.results
+			# 	console.log parsedData.results[i][0]
+
+			@allgenes = parsedData.results
+
+			@scoredict = {}
+			ids = []
+			for i of parsedData.results
+				id = parsedData.results[i][0]
+				ids.push id
+
+			console.log "DDDD", ids
+
+			_.each @allgenes, (geneObj) =>
+				@scoredict[geneObj[0]] = geneObj[1]
+			console.log "map", @scoredict
+
+			for key, value of @scoredict
+				console.log "AA", key, value
+				# console.log geneObj[0]
+				# console.log geneObj[1]
+
+			deferred.resolve true
+
 
 
 
@@ -286,7 +332,7 @@ class App
 
 		cutoff = _.filter @allgenes, (gene) ->
 
-			gene.score <= score 
+			gene.score <= score
 
 		@rendertable cutoff
 		@graph.update score
@@ -345,7 +391,7 @@ class App
 					item.score
 
 			$("#{@opts.target.selector} > div.atted-table-wrapper > table.atted-table").html template {genes: genes}
-		 	
+
 		if @opts.cutoff isnt @opts.origcutoff
 			@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong>>= #{@currentcutoff} (Cutoff has been automatically reduced to guarantee results.)</strong>")
 		else

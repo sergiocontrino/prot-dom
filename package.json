@@ -34,6 +34,8 @@
     "hbsfy": "~2.1.0",
     "spin": "0.0.1",
     "superagent": "~0.18.2",
-    "mediator-js": "~0.9.8"
+    "mediator-js": "~0.9.8",
+    "d3": "~3.5.3",
+    "biojs-vis-feature": "0.0.5"
   }
 }
