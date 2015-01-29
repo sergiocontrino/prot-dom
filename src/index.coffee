@@ -24,23 +24,23 @@ class App
 		if !@opts.method then @opts.method = 'cor'
 
 		# Listener: Switching score types:
-		mediator.subscribe "switch-score", =>
-			method = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[type='radio']:checked");
-			cutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols > input.cutoff");
-			@opts.method = method.val()
-			if cutoff.val()? and cutoff.val() != "" then @opts.origcutoff = cutoff.val() else @opts.origcutoff = @defaultopts.origcutoff
-			if cutoff.val()? and cutoff.val() != "" then @opts.cutoff = cutoff.val() else @opts.cutoff = @defaultopts.cutoff
-			if method.length > 0 and cutoff.length > 0 then @requery @opts, false
+		# mediator.subscribe "switch-score", =>
+		# 	method = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[type='radio']:checked");
+		# 	cutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols > input.cutoff");
+		# 	@opts.method = method.val()
+		# 	if cutoff.val()? and cutoff.val() != "" then @opts.origcutoff = cutoff.val() else @opts.origcutoff = @defaultopts.origcutoff
+		# 	if cutoff.val()? and cutoff.val() != "" then @opts.cutoff = cutoff.val() else @opts.cutoff = @defaultopts.cutoff
+		# 	if method.length > 0 and cutoff.length > 0 then @requery @opts, false
 
-		mediator.subscribe "load-defaults", =>
+		# mediator.subscribe "load-defaults", =>
 
-			radioMethod = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[class='" + @opts.method + "']");
-			textCutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input.cutoff");
-			radioMethod.prop("checked", true)
-			textCutoff.val(@defaultopts.origcutoff)
+		# 	radioMethod = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[class='" + @opts.method + "']");
+		# 	textCutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input.cutoff");
+		# 	radioMethod.prop("checked", true)
+		# 	textCutoff.val(@defaultopts.origcutoff)
 
-			# @requery {method: @opts.method, cutoff: @opts.cutoff}
-			@requery @defaultopts, true
+		# 	# @requery {method: @opts.method, cutoff: @opts.cutoff}
+		# 	@requery @defaultopts, true
 
 		# Fetch our loading template
 		template = require("./templates/shell.hbs");
@@ -50,17 +50,17 @@ class App
 
 		toolbartemplate = require './templates/tools.hbs'
 
-		$("#{@opts.target.selector} > div.toolbar").html toolbartemplate {opts: @opts, mediator: mediator}
-		radioMethod = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[class='" + @opts.method + "']");
-		textCutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input.cutoff");
-		radioMethod.prop("checked", true)
-		textCutoff.val(@opts.cutoff)
+		# $("#{@opts.target.selector} > div.toolbar").html toolbartemplate {opts: @opts, mediator: mediator}
+		# radioMethod = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input[class='" + @opts.method + "']");
+		# textCutoff = $("#{@opts.target.selector} > div.toolbar > div.toolcontrols input.cutoff");
+		# radioMethod.prop("checked", true)
+		# textCutoff.val(@opts.cutoff)
 
-		$('.reload').on "click", ()->
-			mediator.publish "switch-score"
+		# $('.reload').on "click", ()->
+		# 	mediator.publish "switch-score"
 
-		$('.defaults').on "click", ()->
-			mediator.publish "load-defaults"
+		# $('.defaults').on "click", ()->
+		# 	mediator.publish "load-defaults"
 
 		# Options for the spinner:
 		@spinneropts =
@@ -188,32 +188,32 @@ class App
 			# .end (response) =>
 			# 	# console.log "Delete ID resolution response:", response
 
-	requery: (options, autocutoff) ->
+	# requery: (options, autocutoff) ->
 
-		# Execute our pre-query hook, if it exists.
-		if @queryhook? then do @queryhook
+	# 	# Execute our pre-query hook, if it exists.
+	# 	if @queryhook? then do @queryhook
 
-		@loadingmessage.show()
+	# 	@loadingmessage.show()
 
-		@table = @wrapper.find(".atted-table")
-		@table.hide()
-		@opts.target.find(".statsmessage").html("Querying ATTED service...")
+	# 	@table = @wrapper.find(".atted-table")
+	# 	@table.hide()
+	# 	@opts.target.find(".statsmessage").html("Querying ATTED service...")
 
-		@lastoptions = options
+	# 	@lastoptions = options
 
 
-		Q.when(@call(options, null, autocutoff))
-			.then @getResolutionJob
-			.then @waitForResolutionJob
-			.then @fetchResolutionJob
-			.then (results) =>
-				# console.log "final results", results
-				@resolvedgenes = results.body.results.matches.MATCH
-				@resolvedgenes = _.map @resolvedgenes, (gene) =>
-					gene.score = @scoredict[gene.summary.primaryIdentifier]
-					return gene
-				# console.log "after mapping...", @resolvedgenes
-				do @renderapp
+	# 	Q.when(@call(options, null, autocutoff))
+	# 		.then @getResolutionJob
+	# 		.then @waitForResolutionJob
+	# 		.then @fetchResolutionJob
+	# 		.then (results) =>
+	# 			console.log "final results", results
+	# 			@resolvedgenes = results.body.results.matches.MATCH
+	# 			@resolvedgenes = _.map @resolvedgenes, (gene) =>
+	# 				gene.score = @scoredict[gene.summary.primaryIdentifier]
+	# 				return gene
+	# 			console.log "after mapping...", @resolvedgenes
+	# 			do @renderapp
 
 	call: (options, deferred, autocutoff) =>
 
@@ -230,10 +230,24 @@ class App
 		# The URL of our web service
 		#url = "http://atted.jp/cgi-bin/API_coex.cgi?#{@opts.AGIcode}/#{options.method}/#{options.cutoff}"
 
-		url = "http://modalone:8080/thaleminebuild/service/query/results?columnheaders=none" +
-  		      	"&format=json&query=%3Cquery%20name=%22%22%20model=%22genomic%22%20view=" +
-  			  	"%22Protein.proteinDomains.primaryIdentifier%20Protein.proteinDomainRegions.start%22%20longDescription=%22%22%3E%3Cconstraint%20path=%22Protein.uniprotName%22%20op=%22=%22%20value=%22AMS_ARATH%22/%3E%3C/query%3E"
+		# url = "http://modalone:8080/thaleminebuild/service/query/results?columnheaders=none" +
+  # 		      	"&format=json&query=%3Cquery%20name=%22%22%20model=%22genomic%22%20view=" +
+  # 			  	"%22Protein.proteinDomains.primaryIdentifier%20Protein.proteinDomainRegions.start%22%20longDescription=" +
+  # 			  	"%22%22%3E%3Cconstraint%20path=%22Protein.uniprotName%22%20op=%22=%22%20value=" +
+  # 			  	"%22" + @opts.AGIcode + "%22" + 
+  # 			  	"/%3E%3C/query%3E"
 
+		url = "http://modalone:8080/thaleminebuild/service/query/results?query=" +
+				"%3Cquery+name%3D%22%22+model%3D%22genomic%22+view%3D%22" +
+				"Protein.proteinDomains.primaryIdentifier+Protein.proteinDomains.name+" +
+				"Protein.proteinDomainRegions.originalDb+Protein.proteinDomainRegions.originalId+" +
+				"Protein.proteinDomainRegions.start+Protein.proteinDomainRegions.end%22+" +
+				"longDescription%3D%22%22+sortOrder%3D%22Protein.proteinDomains.primaryIdentifier+asc%22%3E%3C" +
+				"constraint+path%3D%22Protein.uniprotName%22+op%3D%22%3D%22+value%3D%22" +
+				@opts.AGIcode + "%22%2F%3E%3C%2Fquery%3E&format=json"
+
+
+		console.log "URL", url
 
 		# Make a request to the web service
 		request.get url, (response) =>
@@ -251,7 +265,7 @@ class App
 				ids.push id
 
 			_.each @allgenes, (geneObj) =>
-				@scoredict[geneObj[0]] = geneObj[1]
+				@scoredict[geneObj[0]] = geneObj[4]
 			console.log "map", @scoredict
 
 			# for key, value of @scoredict
@@ -324,7 +338,6 @@ class App
 
 			if !table.length then $("#{@opts.target.selector} > div.atted-table-wrapper").html("<table class='atted-table collection-table'></table>")
 
-
 			template = require './templates/table.hbs'
 
 			min = _.min genes, (gene) ->
@@ -340,13 +353,13 @@ class App
 
 			$("#{@opts.target.selector} > div.atted-table-wrapper > table.atted-table").html template {genes: genes}
 
-		if @opts.cutoff isnt @opts.origcutoff
-			@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong>>= #{@currentcutoff} (Cutoff has been automatically reduced to guarantee results.)</strong>")
-		else
-			if @opts.method.toUpperCase() is "COR"
-				@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong>>= #{@currentcutoff}</strong>")
-			else
-				@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong><= #{@currentcutoff}</strong>")
+		# if @opts.cutoff isnt @opts.origcutoff
+		# 	@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong>>= #{@currentcutoff} (Cutoff has been automatically reduced to guarantee results.)</strong>")
+		# else
+		# 	if @opts.method.toUpperCase() is "COR"
+		# 		@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong>>= #{@currentcutoff}</strong>")
+		# 	else
+		# 		@opts.target.find(".statsmessage").html("<strong>#{genes.length}</strong> genes found with a score <strong><= #{@currentcutoff}</strong>")
 
 
 
