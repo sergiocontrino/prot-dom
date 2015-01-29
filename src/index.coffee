@@ -14,7 +14,6 @@ class App
 	constructor: (@opts, @callback, @queryhook) ->
 
 		# Execute our prehook, if it exists.
-		#@opts.origcutoff = @opts.cutoff
 		@defaultopts = _.clone @opts
 
 		# Turn our target string into a jquery object
@@ -126,9 +125,8 @@ class App
 		ids = []
 		for key of @scoredict
 			ids.push key
-		console.log "+++", ids
-
 		console.log "plucked ids: ", ids
+
 		# Build our POST data
 		payload =
 			identifiers: ids
@@ -241,52 +239,9 @@ class App
 		request.get url, (response) =>
 
 
-			# @allgenes = Utils.responseToJSON response.text
-
-			# if autocutoff and options.method.toUpperCase() is "COR"
-
-			# 	if @allgenes.length >= options.guarantee
-
-			# 		@scoredict = {}
-
-			# 		_.each @allgenes, (geneObj) =>
-
-			# 			@scoredict[geneObj.name] = geneObj.score
-
-
-			# 		deferred.resolve true
-
-			# 	else if options.guarantee > 0 and options.cutoff > 0
-
-			# 		options.cutoff -= 0.1
-			# 		options.cutoff = options.cutoff.toFixed(3)
-			# 		@call(options, deferred, true)
-
-			# 	else
-
-			# 		deferred.resolve @allgenes
-
-			# else
-
-			# 	@scoredict = {}
-
-			# 	_.each @allgenes, (geneObj) =>
-			# 		@scoredict[geneObj.name] = geneObj.score
-
-			# 	deferred.resolve true
-
-			#@allgenes = response.text
-			
 			console.log "response ", response.text
-			#console.log "allgenes ", @allgenes[5]
-			#response.text['results'][0]
 
 			parsedData = JSON.parse(response.text)
-			console.log "MO", parsedData.results
-
-			# for i of parsedData.results
-			# 	console.log parsedData.results[i][0]
-
 			@allgenes = parsedData.results
 
 			@scoredict = {}
@@ -295,21 +250,14 @@ class App
 				id = parsedData.results[i][0]
 				ids.push id
 
-			console.log "DDDD", ids
-
 			_.each @allgenes, (geneObj) =>
 				@scoredict[geneObj[0]] = geneObj[1]
 			console.log "map", @scoredict
 
-			for key, value of @scoredict
-				console.log "AA", key, value
-				# console.log geneObj[0]
-				# console.log geneObj[1]
+			# for key, value of @scoredict
+			# 	console.log "AA", key, value
 
 			deferred.resolve true
-
-
-
 
 		# Return our promise
 		deferred.promise
